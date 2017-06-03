@@ -25,6 +25,9 @@ func (s *Server) run() {
 	for {
 		select {
 		case client := <-s.connRequests:
+			for members := range s.clients {
+				client.send <- []byte("NAME:" + members.name)
+			}
 			s.clients[client] = true
 		case client := <-s.exitRequests:
 			if _, ok := s.clients[client]; ok {
